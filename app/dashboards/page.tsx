@@ -13,7 +13,9 @@ import { GoogleIcon } from "./components/icons";
 
 export default function DashboardsPage() {
   const { data: session, status } = useSession();
-  const api = useApiKeys({ enabled: !!session });
+  // Only fetch keys when explicitly authenticated (avoids using cached/stale session on deploy)
+  const isAuthenticated = status === "authenticated" && !!session;
+  const api = useApiKeys({ enabled: isAuthenticated });
 
   const handleCopyAndDismissNewKey = async () => {
     if (!api.newlyCreatedKey) return;
@@ -47,7 +49,7 @@ export default function DashboardsPage() {
             Manage your API keys below. Create keys for different environments and revoke them anytime.
           </div>
 
-          {status !== "loading" && !session && (
+          {status !== "loading" && !isAuthenticated && (
             <div className="mb-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-zinc-600 dark:text-zinc-400">
                 Sign in with your Google account to manage API keys and access the dashboard.
@@ -76,7 +78,7 @@ export default function DashboardsPage() {
             loading={api.loading}
             showCreate={api.showCreate}
             onOpenCreate={api.openCreateModal}
-            isLoggedIn={!!session}
+            isLoggedIn={isAuthenticated}
             editingId={api.editingId}
             editName={api.editName}
             setEditName={api.setEditName}
