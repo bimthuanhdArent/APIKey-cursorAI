@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 import {
   HomeIcon,
   CodeBracketIcon,
@@ -13,10 +14,24 @@ import {
   ChevronDownIcon,
 } from "./icons";
 
+function getInitial(name: string | null | undefined, email: string | null | undefined): string {
+  if (name?.trim()) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase().slice(0, 2);
+    return name[0].toUpperCase();
+  }
+  if (email?.[0]) return email[0].toUpperCase();
+  return "U";
+}
+
 export function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const isOverview = pathname === "/dashboards";
   const isPlayground = pathname === "/dashboards/playground";
+
+  const displayName = session?.user?.name ?? session?.user?.email ?? "Personal";
+  const initial = getInitial(session?.user?.name ?? null, session?.user?.email ?? null);
 
   return (
     <aside className="w-56 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col">
@@ -30,10 +45,19 @@ export function Sidebar() {
           type="button"
           className="w-full flex items-center gap-2 text-left text-sm font-medium text-zinc-900 dark:text-zinc-100 px-3 py-2.5 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-900/50 hover:bg-sky-100 dark:hover:bg-sky-900/30 transition-colors"
         >
-          <span className="w-7 h-7 rounded-full bg-sky-500 flex items-center justify-center text-xs font-semibold text-white shrink-0">
-            P
-          </span>
-          <span className="flex-1 truncate">Personal</span>
+          {session?.user?.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={session.user.image}
+              alt=""
+              className="w-7 h-7 rounded-full shrink-0 object-cover"
+            />
+          ) : (
+            <span className="w-7 h-7 rounded-full bg-sky-500 flex items-center justify-center text-xs font-semibold text-white shrink-0">
+              {initial[0]}
+            </span>
+          )}
+          <span className="flex-1 truncate">{displayName}</span>
           <ChevronDownIcon className="shrink-0 text-zinc-400" />
         </button>
       </div>
@@ -90,13 +114,25 @@ export function Sidebar() {
         </a>
       </nav>
       <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-sky-500 flex items-center justify-center text-sm font-semibold text-white shrink-0">
-          U
-        </div>
-        <span className="flex-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">User</span>
+        {session?.user?.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={session.user.image}
+            alt=""
+            className="w-9 h-9 rounded-full shrink-0 object-cover"
+          />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-sky-500 flex items-center justify-center text-sm font-semibold text-white shrink-0">
+            {initial}
+          </div>
+        )}
+        <span className="flex-1 text-sm font-medium text-zinc-700 dark:text-zinc-300 truncate">
+          {displayName}
+        </span>
         <button
           type="button"
-          className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          onClick={() => signOut()}
+          className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
           title="Sign out"
           aria-label="Sign out"
         >

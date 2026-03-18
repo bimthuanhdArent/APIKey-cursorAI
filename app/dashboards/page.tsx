@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn, useSession } from "next-auth/react";
 import { useApiKeys } from "./hooks/useApiKeys";
 import { Sidebar } from "./components/Sidebar";
 import { DashboardHeader } from "./components/DashboardHeader";
@@ -8,8 +9,10 @@ import { Toasts } from "./components/Toasts";
 import { ApiKeysCard } from "./components/ApiKeysCard";
 import { CreateKeyModal } from "./components/CreateKeyModal";
 import { DeleteConfirmModal } from "./components/DeleteConfirmModal";
+import { GoogleIcon } from "./components/icons";
 
 export default function DashboardsPage() {
+  const { data: session, status } = useSession();
   const api = useApiKeys();
 
   const handleCopyAndDismissNewKey = async () => {
@@ -43,6 +46,22 @@ export default function DashboardsPage() {
           <div className="mb-6 rounded-lg bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
             Manage your API keys below. Create keys for different environments and revoke them anytime.
           </div>
+
+          {status !== "loading" && !session && (
+            <div className="mb-6 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                Sign in with your Google account to manage API keys and access the dashboard.
+              </p>
+              <button
+                type="button"
+                onClick={() => signIn("google")}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-zinc-800 dark:text-zinc-100 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-700 shadow-sm transition-colors shrink-0"
+              >
+                <GoogleIcon />
+                Sign in with Google
+              </button>
+            </div>
+          )}
 
           {api.error && (
             <div className="mb-6 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-sm text-red-800 dark:text-red-200">
