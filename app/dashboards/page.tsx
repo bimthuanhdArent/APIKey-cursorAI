@@ -13,7 +13,7 @@ import { GoogleIcon } from "./components/icons";
 
 export default function DashboardsPage() {
   const { data: session, status } = useSession();
-  const api = useApiKeys();
+  const api = useApiKeys({ enabled: !!session });
 
   const handleCopyAndDismissNewKey = async () => {
     if (!api.newlyCreatedKey) return;
@@ -76,6 +76,7 @@ export default function DashboardsPage() {
             loading={api.loading}
             showCreate={api.showCreate}
             onOpenCreate={api.openCreateModal}
+            isLoggedIn={!!session}
             editingId={api.editingId}
             editName={api.editName}
             setEditName={api.setEditName}

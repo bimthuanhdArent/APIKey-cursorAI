@@ -9,6 +9,8 @@ interface ApiKeysCardProps {
   loading: boolean;
   showCreate: boolean;
   onOpenCreate: () => void;
+  /** When false, create button is hidden and empty state asks user to sign in. */
+  isLoggedIn?: boolean;
   editingId: string | null;
   editName: string;
   setEditName: (v: string) => void;
@@ -33,6 +35,7 @@ export function ApiKeysCard({
   keys,
   loading,
   onOpenCreate,
+  isLoggedIn = true,
   editingId,
   editName,
   setEditName,
@@ -58,14 +61,16 @@ export function ApiKeysCard({
         <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
           API Keys
         </h2>
-        <button
-          type="button"
-          onClick={onOpenCreate}
-          className="flex items-center justify-center w-9 h-9 rounded-lg border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:bg-sky-50 dark:hover:bg-sky-950/30 hover:border-sky-200 dark:hover:border-sky-800 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
-          title="Create API key"
-        >
-          <PlusIcon />
-        </button>
+        {isLoggedIn && (
+          <button
+            type="button"
+            onClick={onOpenCreate}
+            className="flex items-center justify-center w-9 h-9 rounded-lg border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 hover:bg-sky-50 dark:hover:bg-sky-950/30 hover:border-sky-200 dark:hover:border-sky-800 hover:text-sky-600 dark:hover:text-sky-400 transition-colors"
+            title="Create API key"
+          >
+            <PlusIcon />
+          </button>
+        )}
       </div>
 
       {loading ? (
@@ -74,15 +79,21 @@ export function ApiKeysCard({
         </div>
       ) : keys.length === 0 ? (
         <div className="px-5 py-12 text-center">
-          <p className="text-zinc-500 dark:text-zinc-400 mb-4">No API keys yet.</p>
-          <button
-            type="button"
-            onClick={onOpenCreate}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-600 px-4 py-2 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800"
-          >
-            <PlusIcon className="w-4 h-4" />
-            Create API key
-          </button>
+          {isLoggedIn ? (
+            <>
+              <p className="text-zinc-500 dark:text-zinc-400 mb-4">No API keys yet.</p>
+              <button
+                type="button"
+                onClick={onOpenCreate}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-600 px-4 py-2 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-800"
+              >
+                <PlusIcon className="w-4 h-4" />
+                Create API key
+              </button>
+            </>
+          ) : (
+            <p className="text-zinc-500 dark:text-zinc-400">Sign in to view and manage your API keys.</p>
+          )}
         </div>
       ) : (
         <div className="overflow-x-auto">

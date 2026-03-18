@@ -14,7 +14,14 @@ const TOAST_DURATION_MS = 2500;
 
 export type ActionToast = { message: string; variant: "success" | "delete" };
 
-export function useApiKeys() {
+export interface UseApiKeysOptions {
+  /** When false, no request is made and keys stay empty. Set to true only when user is logged in. */
+  enabled?: boolean;
+}
+
+export function useApiKeys(options?: UseApiKeysOptions) {
+  const enabled = options?.enabled ?? true;
+
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,8 +59,14 @@ export function useApiKeys() {
   }, []);
 
   useEffect(() => {
-    loadKeys();
-  }, [loadKeys]);
+    if (enabled) {
+      loadKeys();
+    } else {
+      setKeys([]);
+      setLoading(false);
+      setError(null);
+    }
+  }, [enabled, loadKeys]);
 
   const openCreateModal = useCallback(() => {
     setShowCreate(true);
