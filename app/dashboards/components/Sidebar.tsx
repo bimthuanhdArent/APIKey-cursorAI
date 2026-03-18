@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   HomeIcon,
   CodeBracketIcon,
@@ -13,6 +14,10 @@ import {
 } from "./icons";
 
 export function Sidebar() {
+  const pathname = usePathname();
+  const isOverview = pathname === "/dashboards";
+  const isPlayground = pathname === "/dashboards/playground";
+
   return (
     <aside className="w-56 shrink-0 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col">
       <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
@@ -35,18 +40,26 @@ export function Sidebar() {
       <nav className="flex-1 px-2 py-2 space-y-0.5">
         <Link
           href="/dashboards"
-          className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-900/50"
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            isOverview
+              ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-900/50"
+              : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
+          }`}
         >
           <HomeIcon />
           Overview
         </Link>
-        <a
-          href="#"
-          className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+        <Link
+          href="/dashboards/playground"
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+            isPlayground
+              ? "bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-900/50"
+              : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
+          }`}
         >
           <CodeBracketIcon />
           API Playground
-        </a>
+        </Link>
         <a
           href="#"
           className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
