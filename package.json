@@ -9,7 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@langchain/community": "^1.1.24",
+    "@langchain/core": "^1.1.33",
     "@supabase/supabase-js": "^2.99.2",
+    "langchain": "^1.2.34",
     "next": "16.1.7",
     "react": "19.2.3",
     "react-dom": "19.2.3"
@@ -22,6 +25,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.7",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   }
 }
